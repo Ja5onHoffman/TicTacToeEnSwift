@@ -12,11 +12,12 @@ class HudView: UIView, UIGestureRecognizerDelegate {
     
     var labelRect: CGRect?
     var messageLabel: UILabel?
-    let tapRec = UITapGestureRecognizer()
+    // let tapRec = UITapGestureRecognizer()
     
     class func hudInView(view: UIView, message: String, animated: Bool) -> HudView {
         let hudView = HudView(frame: view.bounds)
         hudView.opaque = false
+        hudView.tag = 101
         
         let labelRect: CGRect = CGRectMake(10, 75, 180, 85)
         let messageLabel: UILabel = UILabel(frame: labelRect)
@@ -28,12 +29,9 @@ class HudView: UIView, UIGestureRecognizerDelegate {
             messageLabel.text = message
         })
         
-        hudView.tapRec.addTarget(hudView, action: "removeHudView:")
-        
-        view.addGestureRecognizer(hudView.tapRec)
         view.addSubview(hudView)
         
-       return hudView
+        return hudView
     }
 
     override func drawRect(rect: CGRect) {
@@ -50,10 +48,4 @@ class HudView: UIView, UIGestureRecognizerDelegate {
         color.setFill()
         roundedRect.fill()
     }
-    
-    func removeHudView(recognizer: UITapGestureRecognizer!) {
-        self.hidden = true
-        println("removeHudView")
-    }
-
 }

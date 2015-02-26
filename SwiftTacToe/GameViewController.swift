@@ -37,7 +37,7 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
         self.navigationController?.navigationBarHidden = true
         self.playerScoreLabel.text = String(playerScore)
         self.computerScoreLabel.text = String(computerScore)
@@ -96,7 +96,9 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
         if self.playerScore > 0 {
         let alert = UIAlertView(title: "You sure?", message: "Restarting the game will cost one point", delegate: self, cancelButtonTitle: "Nevermind..", otherButtonTitles: "DO IT!")
         alert.show()
-        self.clearBoard()
+        //self.clearBoard()
+        self.playerScore--
+            
         } else {
             let alert = UIAlertView(title: "No ponts.", message: "Restarting costs one point. You don't have any points", delegate: self, cancelButtonTitle: "K")
             alert.show()
@@ -147,7 +149,7 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
         
         if self.turn >= 5 {
             if gameBoard[0][0] == gameBoard[0][1] && gameBoard[0][1] == gameBoard[0][2] {
-                if self.playerIsX || self.playerIsO {
+                if gameBoard[0][0] == 1 {
                     println("Player wins!")
                     winner = 1
                     self.endGame()
@@ -157,7 +159,7 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
                     self.endGame()
                 }
             } else if gameBoard[1][0] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[1][2] {
-                if self.playerIsX || self.playerIsO {
+                if gameBoard[1][0] == 1 {
                     println("Player wins!")
                     winner = 1
                     self.endGame()
@@ -168,7 +170,7 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
                 }
 
             } else if gameBoard[2][0] == gameBoard[2][1] && gameBoard[2][1] == gameBoard[2][2] {
-                if self.playerIsX || self.playerIsO {
+                if gameBoard[2][0] == 1 {
                     println("Player wins!")
                     winner = 1
                     self.endGame()
@@ -179,7 +181,7 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
                 }
 
             } else if gameBoard[0][0] == gameBoard[1][0] && gameBoard[1][0] == gameBoard[2][0] {
-                if self.playerIsX || self.playerIsO {
+                if gameBoard[0][0] == 1 {
                     println("Player wins!")
                     winner = 1
                     self.endGame()
@@ -190,7 +192,7 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
                 }
 
             } else if gameBoard[0][1] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][1] {
-                if self.playerIsX || self.playerIsO {
+                if gameBoard[0][1] == 1 {
                     println("Player wins!")
                 } else {
                     println("Computer wins!")
@@ -199,7 +201,7 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
                 }
 
             } else if gameBoard[0][2] == gameBoard[1][2] && gameBoard[1][2] == gameBoard[2][2] {
-                if self.playerIsX || self.playerIsO {
+                if gameBoard[0][2] == 1 {
                     println("Player wins!")
                     winner = 1
                     self.endGame()
@@ -210,7 +212,7 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
                 }
 
             } else if gameBoard[0][0] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][2] {
-                if self.playerIsX || self.playerIsO {
+                if gameBoard[0][0] == 1 {
                     println("Player wins!")
                     winner = 1
                     self.endGame()
@@ -221,7 +223,7 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
                 }
 
             } else if gameBoard[0][2] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][0] {
-                if self.playerIsX || self.playerIsO {
+                if gameBoard[0][2] == 1 {
                     println("Player wins!")
                     winner = 1
                     self.endGame()
@@ -235,32 +237,40 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
     }
     
     func endGame() {
+        let tapRec = UITapGestureRecognizer()
+        
         if winner == 1 {
             self.playerScore++
+            self.turn = 0
             self.playerScoreLabel.text = String(self.playerScore)
-            
             let hudView: HudView = HudView.hudInView(self.view, message: "Player won!", animated: true)
-            println(hudView.isFirstResponder())
+            tapRec.addTarget(self, action: "clearBoard")
+            hudView.addGestureRecognizer(tapRec)
             
         } else {
             self.computerScore++
+            self.turn = 0
             self.computerScoreLabel.text = String(self.computerScore)
-            
             let hudView: HudView = HudView.hudInView(self.view, message: "Computer won!", animated: true)
-    
+            tapRec.addTarget(self, action: "clearBoard")
+            hudView.addGestureRecognizer(tapRec)
+            
         }
     }
     
     func clearBoard() {
+        println("Clear board")
+        
+        self.view.viewWithTag(101)?.removeFromSuperview()
+        
         self.gameBoard = [[0,0,0],
                           [0,0,0],
                           [0,0,0]]
         
-        for (var i = 0; i < 2; i++) {
-            for (var j = 0; j < 2; j++) {
-                if self.buttonIndex[i][j].backgroundImage != nil {
-                    self.buttonIndex[i][j].setBackgroundImage(nil, forState: UIControlState.Normal)
-                }
+        // Remove image from buttons
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 3; j++) {
+                self.buttonIndex[i][j].setBackgroundImage(nil, forState: UIControlState.Normal)
             }
         }
     }
